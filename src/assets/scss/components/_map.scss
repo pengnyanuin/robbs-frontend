@@ -1,0 +1,53 @@
+@use "../variables/variables";
+
+.map {
+    position: relative;
+
+    &__row {
+        display: flex;
+    }
+
+    &__field {
+        width: 50px;
+        height: 50px;
+        border: 1px solid black;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        &.wall {
+            background-color: black;
+        }
+    }
+
+    &__preview {
+        &__row {
+            display: flex;
+        }
+
+        &__field {
+            width: 20px;
+            height: 20px;
+            border: 1px solid black;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            &.wall-field {
+                background-color: black;
+            }
+
+            &.box-field {
+                background-color: variables.$movableBoxColor;
+            }
+
+            &.player-field {
+                background-color: red;
+            }
+
+            &.crown-field {
+                background-color: goldenrod;
+            }
+        }
+    }
+}

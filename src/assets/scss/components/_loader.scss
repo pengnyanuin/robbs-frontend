@@ -1,0 +1,18 @@
+.loader {
+    display: inline-block;
+    width: 40px;
+    height: 40px;
+
+    &::after {
+        content: " ";
+        display: block;
+        width: 32px;
+        height: 32px;
+        margin: 5px;
+        border-radius: 50%;
+        border-width: 2px;
+        border-style: solid;
+        border-color: black transparent black transparent;
+        animation: rotate 1s linear infinite;
+    }
+}

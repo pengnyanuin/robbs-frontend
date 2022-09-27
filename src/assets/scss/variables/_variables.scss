@@ -1,0 +1,36 @@
+$primary: #40856e;
+$secondary: #854040;
+$disabledBg: #999999;
+
+$danger: #BF1133;
+
+$white: #ffffff;
+$black: #000000;
+
+// Robbs
+$movableBoxColor: #7766ff;
+
+$transition: .2s ease;
+
+/* ---- Bootstrap ---- */
+$btn-border-radius: 8px;
+$focus-border-radius: 4px;
+$border-radius: 13px;
+$container-max-widths: (
+        sm: 540px,
+        md: 720px,
+        lg: 960px,
+        xl: 1300px
+) !default;
+$theme-colors: (
+        "primary": $primary,
+        "secondary": $secondary,
+);
+$colors: ();
+$grays: ();
+$enable-smooth-scroll: false;
+
+@import "bootstrap/scss/functions";
+@import "bootstrap/scss/variables";
+@import "bootstrap/scss/mixins";
+@import "bootstrap/scss/maps";
