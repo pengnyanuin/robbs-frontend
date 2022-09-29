@@ -46,6 +46,7 @@
 </template>
 <script>
 import axios from 'axios'
+import AuthService from "@/services/auth.service";
 
 export default {
     name: "decks",
@@ -90,10 +91,10 @@ export default {
             })
 
             axios
-                .post('http://127.0.0.1:8000/decks/create', {
+                .post(AuthService.getApiUrl() + 'decks/create', {
                     "name": this.newDeckName,
                     "actions": actionIdsToSend,
-                })
+                }, AuthService.getAuthHeader())
                 .then(response => {
                     console.log(response.data);
                     this.decks.push(response.data);
@@ -107,7 +108,7 @@ export default {
         },
         loadActions() {
             axios
-                .get('http://127.0.0.1:8000/actions')
+                .get(AuthService.getApiUrl() + 'decks/actions', AuthService.getAuthHeader())
                 .then(response => {
                     console.log(response.data);
                     this.actions = response.data;
@@ -139,7 +140,7 @@ export default {
             if (confirm('Are you sure?')) {
                 console.log('delete');
                 axios
-                    .get('http://127.0.0.1:8000/deck/delete/' + deck.id)
+                    .get(AuthService.getApiUrl() + 'decks/delete/' + deck.id, AuthService.getAuthHeader())
                     .then(response => {
                         console.log(response);
                         console.log('remove' + deck);
@@ -155,7 +156,7 @@ export default {
     },
     mounted() {
         axios
-            .get('http://127.0.0.1:8000/decks')
+            .get(AuthService.getApiUrl() + 'decks', AuthService.getAuthHeader())
             .then(response => {
                 console.log(response.data);
                 this.decks = response.data;

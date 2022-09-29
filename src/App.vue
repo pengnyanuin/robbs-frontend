@@ -3,11 +3,11 @@
         <header>
             <div class="container">
                 <nav>
-                    <router-link :to="{ name: 'login'}" class="p-3">
-                        <span>Login</span>
-                    </router-link>
                     <router-link :to="{ name: 'welcome'}" class="p-3">
                         <span>Welcome</span>
+                    </router-link>
+                    <router-link :to="{ name: 'login'}" class="p-3">
+                        <span>Login</span>
                     </router-link>
                     <router-link :to="{ name: 'games'}" class="p-3">
                         <span>Games</span>

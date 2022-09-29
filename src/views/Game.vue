@@ -136,7 +136,7 @@ export default {
             if (!this.roundMovementData) {
                 this.buttonLoading = true;
                 axios
-                    .get('http://127.0.0.1:8000/game/' + this.$route.params.id + '/process')
+                    .get(AuthService.getApiUrl() + 'game/' + this.$route.params.id + '/process', AuthService.getAuthHeader())
                     .then(response => {
                         console.log(response.data);
                         this.roundMovementData = response.data;
@@ -209,7 +209,7 @@ export default {
             });
 
             axios
-                .post('http://127.0.0.1:8000/game/' + this.$route.params.id + '/play', {"moves": playerActions})
+                .post(AuthService.getApiUrl() + 'game/' + this.$route.params.id + '/play', {"moves": playerActions}, AuthService.getAuthHeader())
                 .then(response => {
                     console.log(response.data);
                     this.$router.push({path: '/robbs'});
@@ -248,7 +248,7 @@ export default {
         joinGame() {
             this.gameLoading = true;
             axios
-                .get('http://127.0.0.1:8000/game/' + this.$route.params.id + '/join')
+                .get(AuthService.getApiUrl() + 'game/' + this.$route.params.id + '/join', AuthService.getAuthHeader())
                 .then(response => {
                     console.log(response.data);
 

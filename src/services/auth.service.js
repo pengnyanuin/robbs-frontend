@@ -1,7 +1,8 @@
 import axios from 'axios';
 import authHeader from './auth-header';
 
-const API_URL = 'http://127.0.0.1:8000/api/';
+// const API_URL = 'http://127.0.0.1:8000/api/';
+const API_URL = 'https://robbs.alwaysdata.net/api/';
 
 class AuthService {
     async login(user) {
@@ -9,7 +10,14 @@ class AuthService {
             .post(API_URL + 'login_check', {
                 username: user.username,
                 password: user.password
-            })
+            }
+                // ,
+                // {
+                //     header: {
+                //         'Content-Type': 'application/json'
+                //     }
+                // }
+                )
             .then(response => {
                 if (response.data && Object.hasOwn(response.data, 'token') && Object.hasOwn(response.data, 'refresh_token')) {
                     const tokensSaved = this.setTokens(response);

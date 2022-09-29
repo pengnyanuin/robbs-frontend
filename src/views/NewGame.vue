@@ -65,6 +65,7 @@
 </template>
 <script>
 import axios from 'axios'
+import AuthService from "@/services/auth.service";
 
 export default {
     name: "games",
@@ -104,11 +105,11 @@ export default {
             }
 
             axios
-                .post('http://127.0.0.1:8000/game/new', {
+                .post(AuthService.getApiUrl() + 'game/new', {
                     'title': this.game.title,
                     'deck': this.decks[this.game.deckSelected].id,
                     'map': this.maps[this.game.mapSelected].id,
-                })
+                }, AuthService.getAuthHeader())
                 .then(response => {
                     console.log(response.data);
                     this.$router.push({name: 'game', params: {id: response.data.id}})
@@ -123,7 +124,7 @@ export default {
     },
     mounted() {
         axios
-            .get('http://127.0.0.1:8000/decks')
+            .get(AuthService.getApiUrl() + 'decks', AuthService.getAuthHeader())
             .then(response => {
                 console.log(response.data);
                 this.decks = response.data;
@@ -137,7 +138,7 @@ export default {
             });
 
         axios
-            .get('http://127.0.0.1:8000/maps')
+            .get(AuthService.getApiUrl() + 'maps', AuthService.getAuthHeader())
             .then(response => {
                 console.log(response.data);
                 this.maps = response.data;

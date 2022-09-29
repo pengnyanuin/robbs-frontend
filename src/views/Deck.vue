@@ -26,6 +26,7 @@
 <script>
 import axios from 'axios';
 import {nextTick} from "vue";
+import AuthService from "@/services/auth.service";
 
 export default {
     name: "decks",
@@ -88,10 +89,10 @@ export default {
             })
 
             axios
-                .post('http://127.0.0.1:8000/deck/edit/' + this.$route.params.id, {
+                .post(AuthService.getApiUrl() + 'deck/edit/' + this.$route.params.id, {
                     "name": this.deck.name,
                     "actions": actionIdsToSend,
-                })
+                }, AuthService.getAuthHeader())
                 .then(response => {
                     // console.log(response.data);
                     this.$router.push({ path: '/decks' });
@@ -106,7 +107,7 @@ export default {
     },
     mounted() {
         axios
-            .get('http://127.0.0.1:8000/deck/edit/' + this.$route.params.id)
+            .get(AuthService.getApiUrl() + 'deck/edit/' + this.$route.params.id, AuthService.getAuthHeader())
             .then((response) => {
                 console.log(response.data);
                 if (response.data.hasOwnProperty('deck') && response.data.deck && response.data.hasOwnProperty('actions') && response.data.actions) {

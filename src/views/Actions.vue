@@ -24,6 +24,7 @@
 </template>
 <script>
 import axios from 'axios'
+import AuthService from "@/services/auth.service";
 
 export default {
     name: "actions",
@@ -43,7 +44,7 @@ export default {
             this.unlockNewActive = false;
 
             axios
-                .get('http://127.0.0.1:8000/actions/unlock')
+                .get(AuthService.getApiUrl() + 'actions/unlock', AuthService.getAuthHeader())
                 .then(response => {
                     console.log(response.data);
 
@@ -61,7 +62,7 @@ export default {
     },
     mounted() {
         axios
-            .get('http://127.0.0.1:8000/actions')
+            .get(AuthService.getApiUrl() + 'actions', AuthService.getAuthHeader())
             .then(response => {
                 console.log(response.data);
                 this.actions = response.data;
