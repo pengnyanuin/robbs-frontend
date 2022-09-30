@@ -1,8 +1,8 @@
 import axios from 'axios';
 import authHeader from './auth-header';
 
-const API_URL = 'http://127.0.0.1:8000/api/';
-// const API_URL = 'https://robbs.alwaysdata.net/api/';
+// const API_URL = 'http://127.0.0.1:8000/api/';
+const API_URL = 'https://robbs.alwaysdata.net/api/';
 
 class AuthService {
     async login(user) {
