@@ -212,7 +212,7 @@ export default {
                 .post(AuthService.getApiUrl() + 'game/' + this.$route.params.id + '/play', {"moves": playerActions}, AuthService.getAuthHeader())
                 .then(response => {
                     console.log(response.data);
-                    this.$router.push({path: '/robbs'});
+                    this.$router.push({path: '/games'});
                 })
                 .catch(function (error) {
                     console.log(error);

@@ -27,6 +27,10 @@
         background-color: variables.$disabledBg;
         pointer-events: none;
     }
+
+    &.selected {
+        background-color: variables.$movableBoxColor;
+    }
 }
 
 h1 {
@@ -35,4 +39,8 @@ h1 {
 
 img {
     max-width: 100%;
+}
+
+.color-danger {
+    color: variables.$danger;
 }
