@@ -10,8 +10,10 @@
                 <div v-for="(row, rowKey, rowIndex) in fields" :key="rowIndex" class="map__preview__row">
                     <div v-for="(column, colKey, colIndex) in row" :key="colIndex" class="map__preview__field"
                          :class="{
-                             'wall-field' : column === 2,
-                             'box-field' : column === 3,
+                             'wall-field': column === 2,
+                             'box-field': column === 1001,
+                             'player-field': column === 501,
+                             'crown-field': column === 502
                          }"
                          style="cursor: pointer" @click="applyField(rowKey, colKey)">
                     </div>
@@ -55,7 +57,9 @@ export default {
             tools: {
                 'empty': 1,
                 'wall': 2,
-                'box': 3,
+                'player': 501,
+                'objective': 502,
+                'box': 1001,
             },
             selectedTool: 'empty',
             fields: {
@@ -132,6 +136,18 @@ export default {
             this.map.cols--;
         },
         applyField(row, col) {
+            // Objective check
+            if (this.selectedTool === 'objective') {
+                console.log('a');
+                Object.entries(this.fields).forEach(([key, value]) => {
+                    Object.entries(value).forEach(([key2, value2]) => {
+                        if (value2 === 502) {
+                            this.fields[key][key2] = 1;
+                        }
+                    });
+                });
+            }
+
             this.fields[row][col] = this.tools[this.selectedTool]
         },
         selectTool(tool) {
