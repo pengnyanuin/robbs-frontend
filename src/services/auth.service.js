@@ -10,14 +10,7 @@ class AuthService {
             .post(API_URL + 'login_check', {
                 username: user.username,
                 password: user.password
-            }
-                // ,
-                // {
-                //     header: {
-                //         'Content-Type': 'application/json'
-                //     }
-                // }
-                )
+            })
             .then(response => {
                 if (response.data && Object.hasOwn(response.data, 'token') && Object.hasOwn(response.data, 'refresh_token')) {
                     const tokensSaved = this.setTokens(response);

@@ -262,7 +262,7 @@ export default {
             axios
                 .get(AuthService.getApiUrl() + 'game/' + this.$route.params.id, AuthService.getAuthHeader())
                 .then(response => {
-                    console.log(response.data);
+                    // console.log(response.data);
                     this.game = response.data;
 
                     if (response.data.status === 2) {
@@ -275,9 +275,10 @@ export default {
                         this.gameRunning = true;
 
                         // prepare empty classes for all robbs to be adjustable later
-                        this.game.players.forEach((player) => {
+                        Object.entries(this.game.players).forEach(([playerNum, player]) => {
                             this.robbClasses[player.id] = '';
                         });
+                        console.log(this.game);
                         return;
                     }
 
