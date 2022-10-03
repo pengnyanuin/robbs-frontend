@@ -1,0 +1,49 @@
+.robb {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 20px;
+    position: relative;
+    background-color: black;
+    color: white;
+    transition: left .4s ease, top .4s ease, transform .4s ease;
+
+    &.current {
+        background-color: #ff3344;
+    }
+
+    &::before,
+    &::after {
+        content: '';
+        display: block;
+        position: absolute;
+        width: 5px;
+        height: 10px;
+        bottom: 100%;
+        background-color: black;
+    }
+
+    &::before {
+        left: 0;
+    }
+
+    &::after {
+        right: 0;
+    }
+
+    &.rot- {
+        &1 {
+            transform: rotate(0);
+        }
+        &2 {
+            transform: rotate(90deg);
+        }
+        &3 {
+            transform: rotate(180deg);
+        }
+        &4 {
+            transform: rotate(270deg);
+        }
+    }
+}

@@ -1,0 +1,12 @@
+@use "../variables/variables";
+
+.obstacle {
+    transition: left .4s ease, top .4s ease, transform .4s ease;
+
+    &--box {
+        width: 40px;
+        height: 40px;
+        margin: 5px;
+        background-color: variables.$movableBoxColor;
+    }
+}

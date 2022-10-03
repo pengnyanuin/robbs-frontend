@@ -1,0 +1,59 @@
+.crafting {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+
+    &__plus {
+        display: block;
+        position: relative;
+        width: 20px;
+        height: 20px;
+
+        &::before,
+        &::after {
+            content: '';
+            display: block;
+            position: absolute;
+            background-color: black;
+            inset: 0;
+            margin: auto;
+        }
+
+        &::before {
+            width: 20px;
+            height: 2px;
+        }
+
+        &::after {
+            width: 2px;
+            height: 20px;
+        }
+    }
+
+    &__equals {
+        display: block;
+        position: relative;
+        width: 20px;
+        height: 10px;
+
+        &::before,
+        &::after {
+            content: '';
+            display: block;
+            position: absolute;
+            background-color: black;
+            inset: 0;
+            margin: auto;
+            width: 20px;
+            height: 2px;
+        }
+
+        &::before {
+            bottom: auto;
+        }
+
+        &::after {
+            top: auto;
+        }
+    }
+}
