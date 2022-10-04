@@ -1,21 +1,21 @@
 <template>
-    <div>
-        <header>
-            <div class="container">
-                <nav>
-                    <router-link :to="{ name: 'welcome'}" class="p-3">
-                        <span>Welcome</span>
-                    </router-link>
-                    <router-link :to="{ name: 'login'}" class="p-3">
-                        <span>Login</span>
-                    </router-link>
-                    <router-link :to="{ name: 'games'}" class="p-3">
-                        <span>Games</span>
-                    </router-link>
-                </nav>
-            </div>
-        </header>
-        <div class="container">
+    <header class="header">
+        <div class="main-menu__wrap">
+            <nav class="main-menu">
+                <router-link :to="{ name: 'home'}" class="nav-link">
+                    <span>Home</span>
+                </router-link>
+            </nav>
+            <nav class="main-menu main-menu--secondary">
+                <router-link :to="{ name: 'login'}" class="nav-link">
+                    <span>Login</span>
+                </router-link>
+            </nav>
+        </div>
+    </header>
+    <div class="main-wrap">
+        <Sidebar />
+        <div class="main-content">
             <router-view v-slot="{Component}">
                 <keep-alive include="login">
                     <component :is="Component"></component>
@@ -26,9 +26,13 @@
 </template>
 <script>
 import AuthService from "@/services/auth.service";
+import Sidebar from "@/views/Sidebar.vue";
 
 export default {
     name: "mains",
+    components: {
+        Sidebar
+    },
     created() {
         if (!AuthService.isLoggedIn()) {
             this.$router.push({name: 'login'})

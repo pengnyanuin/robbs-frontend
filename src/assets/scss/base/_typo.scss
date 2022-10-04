@@ -1,40 +1,13 @@
 @use "../variables/variables";
 
-.btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 10px 35px;
-    background-color: variables.$primary;
-    border: 0;
-    border-radius: 0;
-    color: variables.$white;
-    text-decoration: none;
-    transition: all variables.$transition;
-
-    &:hover,
-    &:focus {
-        background-color: variables.$secondary;
-        color: variables.$white;
-    }
-
-    &--danger {
-        background-color: variables.$danger;
-        color: variables.$white;
-    }
-
-    &.disabled {
-        background-color: variables.$disabledBg;
-        pointer-events: none;
-    }
-
-    &.selected {
-        background-color: variables.$movableBoxColor;
-    }
+.main-title {
+    margin: 0;
 }
 
 h1 {
-    font-size: 80px;
+    font-size: 45px;
+    line-height: 1;
+    color: variables.$primary-dark;
 }
 
 img {
