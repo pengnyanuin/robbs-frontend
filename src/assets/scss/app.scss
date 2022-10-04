@@ -1,8 +1,9 @@
 @use "base/typo";
+@use "base/base";
+@use "base/buttons";
 @use "base/animations";
 
 @use "components/checkbox-wrap";
-@use "components/main-menu";
 @use "components/card";
 @use "components/crafting";
 @use "components/map";
@@ -14,3 +15,8 @@
 @use "components/deck";
 @use "components/obstacle";
 @use "components/end-screen";
+@use "components/game";
+
+@use "components/main-menu";
+@use "components/header";
+@use "components/sidebar";

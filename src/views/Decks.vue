@@ -108,7 +108,7 @@ export default {
         },
         loadActions() {
             axios
-                .get(AuthService.getApiUrl() + 'decks/actions', AuthService.getAuthHeader())
+                .get(AuthService.getApiUrl() + 'actions', AuthService.getAuthHeader())
                 .then(response => {
                     console.log(response.data);
                     this.actions = response.data;

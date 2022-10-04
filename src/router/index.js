@@ -1,14 +1,14 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
-import Welcome from '../views/Welcome.vue';
+import Home from '../views/Home.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
       path: '/',
-      name: 'welcome',
-      component: Welcome
+      name: 'home',
+      component: Home
     },
     {
       path: '/login',
@@ -19,6 +19,16 @@ const router = createRouter({
       path: '/game/:id',
       name: 'game',
       component: () => import('../views/Game.vue')
+    },
+    {
+      path: '/games/join',
+      name: 'games_join',
+      component: () => import('../views/GamesJoin.vue')
+    },
+    {
+      path: '/games/history',
+      name: 'games_history',
+      component: () => import('../views/GamesHistory.vue')
     },
     {
       path: '/games',

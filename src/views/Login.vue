@@ -4,7 +4,7 @@
         <div class="loader" v-if="loading"></div>
         <div v-else>
             <div v-if="hasToken">
-                <router-link :to="{ name: 'welcome'}" class="btn">
+                <router-link :to="{ name: 'home'}" class="btn">
                     <span>Continue as {{ name }}</span>
                 </router-link>
                 <div class="mt-3">
@@ -147,7 +147,7 @@ export default {
                 // Successful login
                 this.hasToken = true;
                 this.axiosPlayerData(false);
-                this.$router.push({name: 'welcome'})
+                this.$router.push({name: 'home'})
             }
 
             // Error on login
