@@ -14,7 +14,7 @@
         </div>
     </header>
     <div class="main-wrap">
-        <Sidebar />
+        <Sidebar :logged="loggedIn" />
         <div class="main-content">
             <router-view v-slot="{Component}">
                 <keep-alive include="login">
@@ -30,16 +30,21 @@ import Sidebar from "@/views/Sidebar.vue";
 
 export default {
     name: "mains",
+    data() {
+        return {
+            loggedIn: false,
+        }
+    },
     components: {
         Sidebar
     },
     created() {
-        if (!AuthService.isLoggedIn()) {
-            this.$router.push({name: 'login'})
+        if (AuthService.isLoggedIn()) {
+            this.loggedIn = true;
+        } else {
+            this.$router.push({name: 'login'});
         }
     },
     methods: {}
 }
 </script>
-<style scoped>
-</style>

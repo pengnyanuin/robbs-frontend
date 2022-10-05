@@ -1,8 +1,10 @@
 <template>
-    <div>
-        <h1>LOGIN</h1>
-        <div class="loader" v-if="loading"></div>
-        <div v-else>
+    <div class="main-header">
+        <h1 class="main-title">Login</h1>
+    </div>
+    <div class="main-inner">
+        <Loader v-if="loading || loadingLoginForm || loadingRegisterForm"/>
+        <div v-if="!loading">
             <div v-if="hasToken">
                 <router-link :to="{ name: 'home'}" class="btn">
                     <span>Continue as {{ name }}</span>
@@ -21,7 +23,6 @@
                             <input v-model="loginData.password" placeholder="password" type="password"/>
                         </p>
                         <button type="submit" class="btn">Login</button>
-                        <div class="loader" v-if="loadingLoginForm"></div>
                     </form>
                 </div>
                 <div class="col-md-6">
@@ -41,7 +42,6 @@
                             <div v-for="(error, i) in registerErrors" :key="i">{{ error.message }}</div>
                         </div>
                         <button type="submit" class="btn">Register</button>
-                        <div class="loader" v-if="loadingRegisterForm"></div>
                     </form>
                 </div>
             </div>
@@ -57,9 +57,14 @@
 
 import AuthService from "@/services/auth.service";
 import axios from "axios";
+import Loader from "@/views/components/Loader.vue";
+import {nextTick} from "vue";
 
 export default {
     name: "login",
+    components: {
+        Loader
+    },
     data: () => {
         return {
             loading: true,
@@ -146,8 +151,8 @@ export default {
             if (data && Object.hasOwn(data, 'token') && Object.hasOwn(data, 'refresh_token')) {
                 // Successful login
                 this.hasToken = true;
-                this.axiosPlayerData(false);
-                this.$router.push({name: 'home'})
+                await this.axiosPlayerData(false);
+                this.$router.go({name: 'games'}); // todo fix, doesnt work, only refreshes the same page
             }
 
             // Error on login
