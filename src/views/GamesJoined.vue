@@ -1,7 +1,5 @@
 <template>
     <div class="secondary-menu">
-        <router-link :to="{ name: 'games_join'}" class="btn">Join</router-link>
-        <router-link :to="{ name: 'games_joined'}" class="btn">Joined</router-link>
     </div>
     <div class="main-header">
         <h1 class="main-title">Open</h1>
@@ -17,9 +15,10 @@
         <div class="notice" v-if="error"> Error :c</div>
         <div v-if="!loading && !error">
             <div v-if="games && games.length">
-                <router-link :to="{ name: 'game', params: {id: game.id} }"
-                             v-for="(game, i) in games" :key="i" class="game__button">
+                <router-link :to="{ name: 'game', params: {id: game.id} }" v-for="(game, i) in games" :key="i"
+                             class="game__button">
                     <span class="game__button__title">{{ game.title }}</span>
+                    <span class="game__button__created-by">Made by: {{ game.created_by.name }}</span>
                 </router-link>
                 <a href="#" @click.prevent="loadMore" class="btn mt-5" v-if="maxGames > games.length">More</a>
             </div>
@@ -54,7 +53,7 @@ export default {
     methods: {
         async mountedMethod(retrying) {
             await axios
-                .get(AuthService.getApiUrl() + 'games/open/' + this.page, AuthService.getAuthHeader())
+                .get(AuthService.getApiUrl() + 'games/joined/' + this.page, AuthService.getAuthHeader())
                 .then(response => {
                     console.log(response.data);
                     if (response.data.games) {
