@@ -28,5 +28,17 @@
             margin: auto;
             width: 30px;
         }
+
+        &__created-by {
+            position: absolute;
+            right: 5px;
+            bottom: 5px;
+            width: 200px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            font-size: 14px;
+            color: rgba(variables.$white, .6);
+        }
     }
 }
