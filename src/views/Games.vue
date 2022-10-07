@@ -47,20 +47,22 @@ export default {
         }
     },
     methods: {
-        mountedMethod() {
+        async mountedMethod(retrying) {
             axios
                 .get(AuthService.getApiUrl() + 'games', AuthService.getAuthHeader())
                 .then(response => {
                     console.log(response.data);
                     this.games = response.data.games;
                 })
-                .catch(error => {
+                .catch(async error => {
                     console.log(error);
                     this.error = true;
 
-                    if (error.response.status === 401) {
-                        // Unauthorized
-                        // TODO axios retry
+                    if (error.response.status === 401 && !retrying) {
+                        const hasRefreshed = await AuthService.refreshUser();
+                        if (hasRefreshed) {
+                            await this.mountedMethod(true)
+                        }
                     }
                 })
                 .finally(() => {
@@ -69,8 +71,6 @@ export default {
                 });
         },
         refreshGames() {
-            // this.games = null;
-            // this.loading = true;
             this.error = false;
             this.reloadLoading = true;
 
@@ -79,8 +79,12 @@ export default {
     },
     mounted() {
         this.mountedMethod();
+    },
+    created() {
+        if (!AuthService.isLoggedIn()) {
+            // this.$router.push({name: 'login'})
+            console.log('asdasdasdasda');
+        }
     }
 }
 </script>
-<style scoped>
-</style>

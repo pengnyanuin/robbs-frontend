@@ -1,13 +1,17 @@
 <template>
-    <div>
-        <div>
-            <a class="btn" :class="{'btn--danger': !createNewDeckActive}" href="#" @click.prevent="createNewDeck()">Create
-                new</a>
-        </div>
-
+    <div class="main-header">
+        <h1 class="main-title">Main</h1>
+        <!--                <a href="#" @click.prevent="refreshGames" class="btn-reload"-->
+        <!--                   :class="{'disabled': loading, 'loading': reloadLoading}"><img src="@/assets/images/refresh.svg"-->
+        <!--                                                                                 alt="refresh"/></a>-->
+        <a class="btn" :class="{'btn--danger': !createNewDeckActive}" href="#" @click.prevent="createNewDeck()">+
+            Add</a>
+    </div>
+    <div class="main-inner">
+        <Loader v-if="decksLoading || (createNewDeckActive && actionsLoading)"/>
         <div v-if="createNewDeckActive" class="mt-5">
             <div class="mb-3">
-                <input v-model="newDeckName" type="text" placeholder="Name the deck..." />
+                <input v-model="newDeckName" type="text" placeholder="Name the deck..."/>
             </div>
             <div class="loader" v-if="actionsLoading"></div>
             <div v-else>
@@ -19,21 +23,24 @@
                         <div v-if="action.turn !== 0">Turn: {{ action.turn }}</div>
                     </a>
                 </div>
-                <a class="btn" href="#" @click.prevent="createNewDeckSend()">Create!</a>
+                <div class="d-flex justify-content-between">
+                    <a class="btn" href="#" @click.prevent="createNewDeckBack()">Go back</a>
+                    <a class="btn" href="#" @click.prevent="createNewDeckSend()">Create!</a>
+                </div>
             </div>
         </div>
 
-        <hr class="m-5 mb-5"/>
-
-        <div class="loader" v-if="decksLoading"></div>
-        <div v-else>
+        <div v-if="!decksLoading && !createNewDeckActive">
             <h2>Decks</h2>
             <div class="deck__wrap" v-if="decks.length">
                 <div class="deck" v-for="(deck, i) in decks" :key="i">
                     <div class="deck__name">{{ deck.name }}</div>
-                    <div class="deck__action" v-for="(action, y) in deck.actions" :key="y">{{ action.id }} / speed: {{ action.speed }} - distance: {{ action.distance }} - turn: {{ action.turn }}</div>
+                    <div class="deck__action" v-for="(action, y) in deck.actions" :key="y">{{ action.id }} / speed:
+                        {{ action.speed }} - distance: {{ action.distance }} - turn: {{ action.turn }}
+                    </div>
                     <div class="deck__button d-flex justify-content-between">
-                        <router-link :to="{ name: 'edit_deck', params: {id: deck.id} }" class="btn"><span>Edit</span></router-link>
+                        <router-link :to="{ name: 'edit_deck', params: {id: deck.id} }" class="btn"><span>Edit</span>
+                        </router-link>
                         <a href="#" class="btn btn--danger" @click.prevent="deleteDeck(deck)">Delete</a>
                     </div>
                 </div>
@@ -47,9 +54,13 @@
 <script>
 import axios from 'axios'
 import AuthService from "@/services/auth.service";
+import Loader from "@/views/components/Loader.vue";
 
 export default {
     name: "decks",
+    components: {
+        Loader
+    },
     data() {
         return {
             decks: null,
@@ -73,6 +84,9 @@ export default {
             if (!this.actions) {
                 this.loadActions();
             }
+        },
+        createNewDeckBack() {
+            this.createNewDeckActive = false;
         },
         createNewDeckSend() {
             if (this.actionsSelected.length < this.deckSize) {
