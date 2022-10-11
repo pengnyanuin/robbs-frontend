@@ -1,9 +1,9 @@
 <template>
     <div class="main-header">
         <h1 class="main-title">Main</h1>
-<!--        <a href="#" @click.prevent="refreshGames" class="btn-reload"-->
-<!--           :class="{'disabled': loading, 'loading': reloadLoading}"><img src="@/assets/images/refresh.svg"-->
-<!--                                                                         alt="refresh"/></a>-->
+        <!--        <a href="#" @click.prevent="refreshGames" class="btn-reload"-->
+        <!--           :class="{'disabled': loading, 'loading': reloadLoading}"><img src="@/assets/images/refresh.svg"-->
+        <!--                                                                         alt="refresh"/></a>-->
     </div>
     <div class="main-inner">
         <div v-if="loggedIn" class="d-flex gap-3">

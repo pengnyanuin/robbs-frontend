@@ -1,8 +1,4 @@
 <template>
-    <div class="secondary-menu">
-        <router-link :to="{ name: 'games_join'}" class="btn">Join</router-link>
-        <router-link :to="{ name: 'games_joined'}" class="btn">Joined</router-link>
-    </div>
     <div class="main-header">
         <h1 class="main-title">Open</h1>
         <a href="#" @click.prevent="refreshGames" class="btn-reload"

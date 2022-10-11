@@ -1,5 +1,8 @@
 <template>
-    <div>
+    <div class="main-header">
+        <h1 class="main-title">new map</h1>
+    </div>
+    <div class="main-inner">
         <div class="mb-3">
             <h2>Title: </h2>
             <input v-model="map.title" type="text"/>
@@ -28,7 +31,7 @@
                     <a href="#" class="btn btn--danger" @click.prevent="removeRow">Remove row</a>
                     <a href="#" class="btn btn--danger" @click.prevent="removeColumn">Remove column</a>
                 </div>
-                <div class="d-flex gap-3 mb-3">
+                <div class="d-flex gap-3 mb-3 flex-wrap">
                     <a href="#" class="btn" v-for="(tool, toolName, i) in tools" :key="i"
                        :class="{'selected': selectedTool === toolName}"
                        @click.prevent="selectTool(toolName)">{{ toolName }}</a>

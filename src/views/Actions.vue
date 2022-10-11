@@ -1,14 +1,15 @@
 <template>
-    <div>
-        <div>
-            <a class="btn" :class="{'disabled': !unlockNewActive}" href="#" @click.prevent="unlockNewAction()" >{{ unlockNewActive ? unlockNewText : unlockNewTextLoading }}</a>
-        </div>
+    <div class="main-header">
+        <h1 class="main-title">Actions</h1>
+        <a class="btn" :class="{'disabled': !unlockNewActive}" href="#" @click.prevent="unlockNewAction()" >{{ unlockNewActive ? unlockNewText : unlockNewTextLoading }}</a>
+    </div>
+    <div class="main-inner">
+        <Loader v-if="actionsLoading"/>
 
         <hr class="m-5 mb-5"/>
 
         <div class="loader" v-if="actionsLoading"></div>
         <div v-else>
-            <h2>Actions</h2>
             <div class="action__wrap" v-if="actions.length">
                 <div class="action" v-for="(action, i) in actions" :key="i">
                     <div>Speed: {{ action.speed }}</div>
@@ -25,9 +26,13 @@
 <script>
 import axios from 'axios'
 import AuthService from "@/services/auth.service";
+import Loader from "@/views/components/Loader.vue";
 
 export default {
     name: "actions",
+    components: {
+        Loader
+    },
     data() {
         return {
             actions: null,

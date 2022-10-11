@@ -1,5 +1,8 @@
 <template>
-    <div>
+    <div class="main-header">
+        <h1 class="main-title">deck</h1>
+    </div>
+    <div class="main-inner">
         <div class="loader" v-if="deckLoading && !deckError"></div>
         <div class="error" v-else-if="deckError"><p>Error while loading</p></div>
         <div v-else>

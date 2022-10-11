@@ -1,5 +1,8 @@
 <template>
-    <div>
+    <div class="main-header">
+        <h1 class="main-title">new gaem</h1>
+    </div>
+    <div class="main-inner">
         <div class="mb-3">
             <h2>Title: </h2>
             <input v-model="game.title" type="text"/>

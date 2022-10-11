@@ -1,10 +1,11 @@
 <template>
-    <div>
+    <div class="main-header">
+        <h1 class="main-title">{{ gameLoading ? 'Loading game...' : game.title }}<template v-if="!gameLoading"> - Round {{ displayEndOfGame ? game.roundNumber - 1 : game.roundNumber }}</template></h1>
+    </div>
+    <div class="main-inner">
         <div class="loader" v-if="gameLoading"></div>
         <template v-else>
             <div>
-                <h2>{{ game.title }} - Round {{ displayEndOfGame ? game.roundNumber - 1 : game.roundNumber }}</h2>
-
                 <div v-if="!gameRunning && game.canJoin">
                     <a class="btn btn--danger" href="#" @click.prevent="joinGame()">Join!</a>
                 </div>
