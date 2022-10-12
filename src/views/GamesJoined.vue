@@ -2,7 +2,7 @@
     <div class="secondary-menu">
     </div>
     <div class="main-header">
-        <h1 class="main-title">Open</h1>
+        <h1 class="main-title">Open - joined</h1>
         <a href="#" @click.prevent="refreshGames" class="btn-reload"
            :class="{'disabled': loading, 'loading': reloadLoading}"><img src="@/assets/images/refresh.svg"
                                                                          alt="refresh"/></a>
@@ -18,7 +18,7 @@
                 <router-link :to="{ name: 'game', params: {id: game.id} }" v-for="(game, i) in games" :key="i"
                              class="game__button">
                     <span class="game__button__title">{{ game.title }}</span>
-                    <span class="game__button__created-by">Made by: {{ game.created_by.name }}</span>
+<!--                    <span class="game__button__created-by">Made by: {{ game.created_by.name }}</span>-->
                 </router-link>
                 <a href="#" @click.prevent="loadMore" class="btn mt-5" v-if="maxGames > games.length">More</a>
             </div>

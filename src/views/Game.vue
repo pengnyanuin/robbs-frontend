@@ -3,11 +3,25 @@
         <h1 class="main-title">{{ gameLoading ? 'Loading game...' : game.title }}<template v-if="!gameLoading"> - Round {{ displayEndOfGame ? game.roundNumber - 1 : game.roundNumber }}</template></h1>
     </div>
     <div class="main-inner">
-        <div class="loader" v-if="gameLoading"></div>
+        <Loader v-if="gameLoading"/>
         <template v-else>
             <div>
                 <div v-if="!gameRunning && game.canJoin">
-                    <a class="btn btn--danger" href="#" @click.prevent="joinGame()">Join!</a>
+
+                    <div class="mb-3">
+                        <h2>Select a deck:</h2>
+                        <div class="loader" v-if="decksLoading"></div>
+                        <div class="action__wrap mb-3" v-else-if="!decksError">
+                            <a href="#" class="action" v-for="(deck, i) in decks" @click.prevent="selectDeck(i)"
+                               :key="i" :class="{ 'selected' : deckSelected === i }">
+                                {{ deck.name }}
+                            </a>
+                        </div>
+                        <div class="notice-message error" v-else><p>There was an error while loading available decks.</p>
+                        </div>
+                    </div>
+
+                    <a class="btn btn--danger" :class="{'disabled': deckSelected === null}" href="#" @click.prevent="joinGame()">Join!</a>
                 </div>
 
                 <div v-if="displayEndOfGame" class="end-screen" :class="{'end-screen--winner': isWinner}">
@@ -67,18 +81,16 @@
                 <div class="action__wrap">
                     <a href="#" class="action" v-for="(action, i) in actionBoard" @click.prevent="selectAction(i)"
                        :key="i" :class="{ 'selected' : action.selected }">
-                        <div v-if="action.selected" class="d-flex justify-content-between"><span>{{
-                                action.selected
-                            }}</span><span>{{ i }}</span></div>
-                        <div>Speed: {{ action.speed }}</div>
-                        <div v-if="action.distance !== 0">Distance: {{ action.distance }}</div>
-                        <div v-if="action.turn !== 0">Turn: {{ action.turn }}</div>
+                        <div class="d-flex justify-content-between"><b>{{ action.title }} {{ action.selected }}</b><u>Speed: {{ action.speed }}</u></div>
+                        <div>{{ action.type }}</div>
+                        <div><i>{{ action.description }}</i></div>
+                        <hr />
+                        <div v-for="(action, actionIndex, i) in action.properties" :key="i">
+                            {{ actionIndex }}: {{ action }}
+                        </div>
                     </a>
                 </div>
                 <a v-if="cardsCanSend" href="#" class="btn" @click.prevent="sendCards()">Send the cards</a>
-                <div>
-                    <a href="#" class="btn" @click.prevent="consoleTest()">Test</a>
-                </div>
             </div>
         </template>
     </div>
@@ -88,6 +100,7 @@ import axios from 'axios';
 import Robb from './components/Robb.vue';
 import MapObject from './components/MapObject.vue';
 import AuthService from "@/services/auth.service";
+import Loader from "@/views/components/Loader.vue";
 
 export default {
     name: "game",
@@ -97,6 +110,7 @@ export default {
     components: {
         Robb,
         MapObject,
+        Loader,
     },
     data() {
         return {
@@ -125,13 +139,18 @@ export default {
                 2: null,
                 3: null,
                 4: null,
-                5: null
-            }
+            },
+
+            // Decks - joining a game
+            decks: null,
+            decksError: false,
+            decksLoading: true,
+            deckSelected: null,
         }
     },
     methods: {
-        consoleTest() {
-            console.log(this.actionsToSend);
+        selectDeck(index) {
+            this.deckSelected = index;
         },
         getRoundData() {
             if (!this.roundMovementData) {
@@ -199,7 +218,7 @@ export default {
             })
         },
         sendCards() {
-            if (this.actionsSelected < 5) {
+            if (this.actionsSelected < 4) {
                 console.log('not enough actions selected');
                 return;
             }
@@ -236,7 +255,7 @@ export default {
                 return;
             }
 
-            if (this.actionsSelected >= 5) {
+            if (this.actionsSelected >= 4) {
                 console.log('Action field is full');
                 return;
             }
@@ -247,9 +266,15 @@ export default {
             this.actionsToSend[this.actionsSelected] = index;
         },
         joinGame() {
+            if (this.deckSelected === null) {
+                alert('Need to select a deck!');
+                return;
+            }
             this.gameLoading = true;
             axios
-                .get(AuthService.getApiUrl() + 'game/' + this.$route.params.id + '/join', AuthService.getAuthHeader())
+                .post(AuthService.getApiUrl() + 'game/' + this.$route.params.id + '/join',
+                    {"selected_deck": this.decks[this.deckSelected].id},
+                    AuthService.getAuthHeader())
                 .then(response => {
                     console.log(response.data);
 
@@ -266,6 +291,7 @@ export default {
                     // console.log(response.data);
                     this.game = response.data;
 
+                    // Game is running
                     if (response.data.status === 2) {
                         this.originalPositions = JSON.parse(JSON.stringify(response.data.playerPositions[response.data.roundNumber]));
                         if (response.data.objectPositions.length > 0) {
@@ -283,6 +309,7 @@ export default {
                         return;
                     }
 
+                    // Game ended
                     if (response.data.status === 3) {
                         this.originalPositions = JSON.parse(JSON.stringify(response.data.playerPositions[response.data.roundNumber]));
                         if (response.data.objectPositions.length > 0) {
@@ -299,6 +326,21 @@ export default {
                         if (this.endOfGameData.winner.id === response.data.myId) {
                             this.isWinner = true;
                         }
+                    }
+
+                    if (response.data.status === 1) {
+                        axios
+                            .get(AuthService.getApiUrl() + 'decks', AuthService.getAuthHeader())
+                            .then(response => {
+                                this.decks = response.data;
+                            })
+                            .catch((error) => {
+                                console.log(error);
+                                this.decksError = true;
+                            })
+                            .finally(() => {
+                                this.decksLoading = false;
+                            });
                     }
 
                     this.gameRunning = false;

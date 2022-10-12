@@ -38,7 +38,7 @@ export default {
             deck: null,
             deckLoading: true,
             deckError: false,
-            deckSize: 10,
+            deckSize: 15,
             deckNameEdit: false,
             actions: null,
             actionsSelected: []

@@ -14,8 +14,8 @@
                 <router-link :to="{ name: 'game', params: {id: myTurnGame.id} }"
                              v-for="(myTurnGame, i) in games.myTurnGames" :key="i" class="game__button">
                     <span class="game__button__title">{{ myTurnGame.title }}</span>
-                    <img class="game__button__my-turn" v-if="myTurnGame.myTurn" src="@/assets/images/dice.svg"
-                         alt="Dice"/>
+<!--                    <img class="game__button__my-turn" v-if="myTurnGame.myTurn" src="@/assets/images/dice.svg"-->
+<!--                         alt="Dice"/>-->
                 </router-link>
                 <h2>Waiting</h2>
                 <router-link :to="{ name: 'game', params: {id: myGame.id} }"
