@@ -41,10 +41,8 @@ export default {
             loggedIn: false,
         }
     },
-    created() {
-        if (AuthService.isLoggedIn()) {
-            this.loggedIn = true;
-        }
+    async created() {
+        this.loggedIn = await AuthService.checkUser(this, false);
     }
 };
 </script>

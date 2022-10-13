@@ -18,7 +18,7 @@
                 <router-link :to="{ name: 'game', params: {id: game.id} }" v-for="(game, i) in games" :key="i"
                              class="game__button">
                     <span class="game__button__title">{{ game.title }}</span>
-<!--                    <span class="game__button__created-by">Made by: {{ game.created_by.name }}</span>-->
+                    <!--                    <span class="game__button__created-by">Made by: {{ game.created_by.name }}</span>-->
                 </router-link>
                 <a href="#" @click.prevent="loadMore" class="btn mt-5" v-if="maxGames > games.length">More</a>
             </div>
@@ -51,32 +51,30 @@ export default {
         }
     },
     methods: {
-        async mountedMethod(retrying) {
-            await axios
-                .get(AuthService.getApiUrl() + 'games/joined/' + this.page, AuthService.getAuthHeader())
-                .then(response => {
-                    console.log(response.data);
-                    if (response.data.games) {
-                        this.games.push(...response.data.games);
-                    }
-                    this.maxGames = response.data.numberOfPosts;
-                })
-                .catch(async error => {
-                    console.log(error);
-                    this.error = true;
-
-                    if (error.response.status === 401 && !retrying) {
-                        const hasRefreshed = await AuthService.refreshUser();
-                        if (hasRefreshed) {
-                            await this.mountedMethod(true)
+        async mountedMethod() {
+            const checked = await AuthService.checkUser(this, false);
+            if (checked) {
+                await axios
+                    .get(AuthService.getApiUrl() + 'games/joined/' + this.page, AuthService.getAuthHeader())
+                    .then(response => {
+                        console.log(response.data);
+                        if (response.data.games) {
+                            this.games.push(...response.data.games);
                         }
-                    }
-                })
-                .finally(() => {
-                    this.loading = false;
-                    this.reloadLoading = false;
-                    this.loadingMore = false;
-                });
+                        this.maxGames = response.data.numberOfPosts;
+                    })
+                    .catch(async error => {
+                        console.log(error);
+                        this.error = true;
+
+                    })
+                    .finally(() => {
+                        this.loading = false;
+                        this.reloadLoading = false;
+                        this.loadingMore = false;
+                    });
+
+            }
             return true;
         },
         loadMore() {
@@ -97,9 +95,7 @@ export default {
         this.mountedMethod();
     },
     created() {
-        if (!AuthService.isLoggedIn()) {
-            this.$router.push({name: 'login'})
-        }
+        AuthService.checkUser(this, false);
     }
 }
 </script>

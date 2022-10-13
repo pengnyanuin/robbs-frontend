@@ -47,28 +47,24 @@ export default {
         }
     },
     methods: {
-        async mountedMethod(retrying) {
-            axios
-                .get(AuthService.getApiUrl() + 'games', AuthService.getAuthHeader())
-                .then(response => {
-                    console.log(response.data);
-                    this.games = response.data.games;
-                })
-                .catch(async error => {
-                    console.log(error);
-                    this.error = true;
-
-                    if (error.response.status === 401 && !retrying) {
-                        const hasRefreshed = await AuthService.refreshUser();
-                        if (hasRefreshed) {
-                            await this.mountedMethod(true)
-                        }
-                    }
-                })
-                .finally(() => {
-                    this.loading = false;
-                    this.reloadLoading = false;
-                });
+        async mountedMethod() {
+            const checked = await AuthService.checkUser(this, false);
+            if (checked) {
+                axios
+                    .get(AuthService.getApiUrl() + 'games', AuthService.getAuthHeader())
+                    .then(response => {
+                        console.log(response.data);
+                        this.games = response.data.games;
+                    })
+                    .catch(async error => {
+                        console.log(error);
+                        this.error = true;
+                    })
+                    .finally(() => {
+                        this.loading = false;
+                        this.reloadLoading = false;
+                    });
+            }
         },
         refreshGames() {
             this.error = false;
@@ -81,10 +77,7 @@ export default {
         this.mountedMethod();
     },
     created() {
-        if (!AuthService.isLoggedIn()) {
-            // this.$router.push({name: 'login'})
-            console.log('asdasdasdasda');
-        }
+        AuthService.checkUser(this, false);
     }
 }
 </script>

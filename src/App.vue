@@ -38,12 +38,8 @@ export default {
     components: {
         Sidebar
     },
-    created() {
-        if (AuthService.isLoggedIn()) {
-            this.loggedIn = true;
-        } else {
-            this.$router.push({name: 'login'});
-        }
+    async created() {
+        this.loggedIn = await AuthService.checkUser(this, false);
     },
     methods: {}
 }

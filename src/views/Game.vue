@@ -1,6 +1,11 @@
 <template>
     <div class="main-header">
-        <h1 class="main-title">{{ gameLoading ? 'Loading game...' : game.title }}<template v-if="!gameLoading"> - Round {{ displayEndOfGame ? game.roundNumber - 1 : game.roundNumber }}</template></h1>
+        <h1 class="main-title">{{ gameLoading ? 'Loading game...' : game.title }}
+            <template v-if="!gameLoading"> - Round {{
+                    displayEndOfGame ? game.roundNumber - 1 : game.roundNumber
+                }}
+            </template>
+        </h1>
     </div>
     <div class="main-inner">
         <Loader v-if="gameLoading"/>
@@ -17,11 +22,13 @@
                                 {{ deck.name }}
                             </a>
                         </div>
-                        <div class="notice-message error" v-else><p>There was an error while loading available decks.</p>
+                        <div class="notice-message error" v-else><p>There was an error while loading available
+                            decks.</p>
                         </div>
                     </div>
 
-                    <a class="btn btn--danger" :class="{'disabled': deckSelected === null}" href="#" @click.prevent="joinGame()">Join!</a>
+                    <a class="btn btn--danger" :class="{'disabled': deckSelected === null}" href="#"
+                       @click.prevent="joinGame()">Join!</a>
                 </div>
 
                 <div v-if="displayEndOfGame" class="end-screen" :class="{'end-screen--winner': isWinner}">
@@ -81,10 +88,11 @@
                 <div class="action__wrap">
                     <a href="#" class="action" v-for="(action, i) in actionBoard" @click.prevent="selectAction(i)"
                        :key="i" :class="{ 'selected' : action.selected }">
-                        <div class="d-flex justify-content-between"><b>{{ action.title }} {{ action.selected }}</b><u>Speed: {{ action.speed }}</u></div>
+                        <div class="d-flex justify-content-between"><b>{{ action.title }} {{ action.selected }}</b><u>Speed:
+                            {{ action.speed }}</u></div>
                         <div>{{ action.type }}</div>
                         <div><i>{{ action.description }}</i></div>
-                        <hr />
+                        <hr/>
                         <div v-for="(action, actionIndex, i) in action.properties" :key="i">
                             {{ actionIndex }}: {{ action }}
                         </div>
@@ -152,23 +160,27 @@ export default {
         selectDeck(index) {
             this.deckSelected = index;
         },
-        getRoundData() {
+        async getRoundData() {
             if (!this.roundMovementData) {
                 this.buttonLoading = true;
-                axios
-                    .get(AuthService.getApiUrl() + 'game/' + this.$route.params.id + '/process', AuthService.getAuthHeader())
-                    .then(response => {
-                        console.log(response.data);
-                        this.roundMovementData = response.data;
-                        this.buttonText = 'Replay the turn'
-                        this.playRound();
-                    })
-                    .catch((error) => {
-                        console.log(error);
-                    })
-                    .finally(() => {
-                        this.buttonLoading = false;
-                    });
+
+                const checked = await AuthService.checkUser(this, false);
+                if (checked) {
+                    axios
+                        .get(AuthService.getApiUrl() + 'game/' + this.$route.params.id + '/process', AuthService.getAuthHeader())
+                        .then(response => {
+                            console.log(response.data);
+                            this.roundMovementData = response.data;
+                            this.buttonText = 'Replay the turn'
+                            this.playRound();
+                        })
+                        .catch((error) => {
+                            console.log(error);
+                        })
+                        .finally(() => {
+                            this.buttonLoading = false;
+                        });
+                }
             } else {
                 this.game.playerPositions[this.game.roundNumber] = JSON.parse(JSON.stringify(this.originalPositions));
                 this.game.objectPositions[this.game.roundNumber] = JSON.parse(JSON.stringify(this.originalObjectPositions));
@@ -217,7 +229,7 @@ export default {
                 })
             })
         },
-        sendCards() {
+        async sendCards() {
             if (this.actionsSelected < 4) {
                 console.log('not enough actions selected');
                 return;
@@ -228,19 +240,22 @@ export default {
                 playerActions.push(this.actionBoard[this.actionsToSend[key]].id);
             });
 
-            axios
-                .post(AuthService.getApiUrl() + 'game/' + this.$route.params.id + '/play', {"moves": playerActions}, AuthService.getAuthHeader())
-                .then(response => {
-                    console.log(response.data);
-                    this.$router.push({path: '/games'});
-                })
-                .catch(function (error) {
-                    console.log(error);
-                    this.gameError = true;
-                })
-                .finally(() => {
-                    console.log('cards sent maybe')
-                });
+            const checked = await AuthService.checkUser(this, false);
+            if (checked) {
+                axios
+                    .post(AuthService.getApiUrl() + 'game/' + this.$route.params.id + '/play', {"moves": playerActions}, AuthService.getAuthHeader())
+                    .then(response => {
+                        console.log(response.data);
+                        this.$router.push({path: '/games'});
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                        this.gameError = true;
+                    })
+                    .finally(() => {
+                        console.log('cards sent maybe')
+                    });
+            }
         },
         selectAction(index) {
             // If action is currently selected
@@ -265,97 +280,107 @@ export default {
             this.actionBoard[index].selected = this.actionsSelected;
             this.actionsToSend[this.actionsSelected] = index;
         },
-        joinGame() {
+        async joinGame() {
             if (this.deckSelected === null) {
                 alert('Need to select a deck!');
                 return;
             }
             this.gameLoading = true;
-            axios
-                .post(AuthService.getApiUrl() + 'game/' + this.$route.params.id + '/join',
-                    {"selected_deck": this.decks[this.deckSelected].id},
-                    AuthService.getAuthHeader())
-                .then(response => {
-                    console.log(response.data);
 
-                    this.mountedMethod();
-                })
-                .catch((error) => {
-                    console.log(error);
-                })
+            const checked = await AuthService.checkUser(this, false);
+            if (checked) {
+                axios
+                    .post(AuthService.getApiUrl() + 'game/' + this.$route.params.id + '/join',
+                        {"selected_deck": this.decks[this.deckSelected].id},
+                        AuthService.getAuthHeader())
+                    .then(response => {
+                        console.log(response.data);
+
+                        this.mountedMethod();
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                    })
+            }
         },
-        mountedMethod() {
-            axios
-                .get(AuthService.getApiUrl() + 'game/' + this.$route.params.id, AuthService.getAuthHeader())
-                .then(response => {
-                    // console.log(response.data);
-                    this.game = response.data;
+        async mountedMethod() {
+            const checked = await AuthService.checkUser(this, false);
+            if (checked) {
+                axios
+                    .get(AuthService.getApiUrl() + 'game/' + this.$route.params.id, AuthService.getAuthHeader())
+                    .then(response => {
+                        // console.log(response.data);
+                        this.game = response.data;
 
-                    // Game is running
-                    if (response.data.status === 2) {
-                        this.originalPositions = JSON.parse(JSON.stringify(response.data.playerPositions[response.data.roundNumber]));
-                        if (response.data.objectPositions.length > 0) {
-                            this.originalObjectPositions = JSON.parse(JSON.stringify(response.data.objectPositions[response.data.roundNumber]));
-                        }
-                        this.cardsCanSend = response.data.myTurn;
-                        this.actionBoard = JSON.parse(JSON.stringify(response.data.playerCards));
-                        this.gameRunning = true;
+                        // Game is running
+                        if (response.data.status === 2) {
+                            this.originalPositions = JSON.parse(JSON.stringify(response.data.playerPositions[response.data.roundNumber]));
+                            if (response.data.objectPositions.length > 0) {
+                                this.originalObjectPositions = JSON.parse(JSON.stringify(response.data.objectPositions[response.data.roundNumber]));
+                            }
+                            this.cardsCanSend = response.data.myTurn;
+                            this.actionBoard = JSON.parse(JSON.stringify(response.data.playerCards));
+                            this.gameRunning = true;
 
-                        // prepare empty classes for all robbs to be adjustable later
-                        Object.entries(this.game.players).forEach(([playerNum, player]) => {
-                            this.robbClasses[player.id] = '';
-                        });
-                        console.log(this.game);
-                        return;
-                    }
-
-                    // Game ended
-                    if (response.data.status === 3) {
-                        this.originalPositions = JSON.parse(JSON.stringify(response.data.playerPositions[response.data.roundNumber]));
-                        if (response.data.objectPositions.length > 0) {
-                            this.originalObjectPositions = JSON.parse(JSON.stringify(response.data.objectPositions[response.data.roundNumber]));
-                        }
-                        this.displayEndOfGame = true;
-                        const winnerId = response.data.winner;
-
-                        this.endOfGameData = {
-                            'winner': response.data.players[winnerId],
-                            'length': response.data.roundNumber - 1,
-                        }
-
-                        if (this.endOfGameData.winner.id === response.data.myId) {
-                            this.isWinner = true;
-                        }
-                    }
-
-                    if (response.data.status === 1) {
-                        axios
-                            .get(AuthService.getApiUrl() + 'decks', AuthService.getAuthHeader())
-                            .then(response => {
-                                this.decks = response.data;
-                            })
-                            .catch((error) => {
-                                console.log(error);
-                                this.decksError = true;
-                            })
-                            .finally(() => {
-                                this.decksLoading = false;
+                            // prepare empty classes for all robbs to be adjustable later
+                            Object.entries(this.game.players).forEach(([playerNum, player]) => {
+                                this.robbClasses[player.id] = '';
                             });
-                    }
+                            console.log(this.game);
+                            return;
+                        }
 
-                    this.gameRunning = false;
-                })
-                .catch((error) => {
-                    console.log(error);
-                    this.gameError = true;
-                })
-                .finally(() => {
-                    this.gameLoading = false;
-                });
+                        // Game ended
+                        if (response.data.status === 3) {
+                            this.originalPositions = JSON.parse(JSON.stringify(response.data.playerPositions[response.data.roundNumber]));
+                            if (response.data.objectPositions.length > 0) {
+                                this.originalObjectPositions = JSON.parse(JSON.stringify(response.data.objectPositions[response.data.roundNumber]));
+                            }
+                            this.displayEndOfGame = true;
+                            const winnerId = response.data.winner;
+
+                            this.endOfGameData = {
+                                'winner': response.data.players[winnerId],
+                                'length': response.data.roundNumber - 1,
+                            }
+
+                            if (this.endOfGameData.winner.id === response.data.myId) {
+                                this.isWinner = true;
+                            }
+                        }
+
+                        if (response.data.status === 1) {
+                            axios
+                                .get(AuthService.getApiUrl() + 'decks', AuthService.getAuthHeader())
+                                .then(response => {
+                                    this.decks = response.data;
+                                })
+                                .catch((error) => {
+                                    console.log(error);
+                                    this.decksError = true;
+                                })
+                                .finally(() => {
+                                    this.decksLoading = false;
+                                });
+                        }
+
+                        this.gameRunning = false;
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                        this.gameError = true;
+                    })
+                    .finally(() => {
+                        this.gameLoading = false;
+                    });
+            }
         }
     },
     mounted() {
         this.mountedMethod();
+    },
+    created() {
+        AuthService.checkUser(this, false);
     }
 }
 </script>

@@ -67,7 +67,7 @@ export default {
     },
     data: () => {
         return {
-            loading: true,
+            loading: false,
             loadingLoginForm: false,
             loadingRegisterForm: false,
             hasToken: false,
@@ -151,8 +151,8 @@ export default {
             if (data && Object.hasOwn(data, 'token') && Object.hasOwn(data, 'refresh_token')) {
                 // Successful login
                 this.hasToken = true;
-                await this.axiosPlayerData(false);
-                this.$router.go({name: 'games'}); // todo fix, doesnt work, only refreshes the same page
+                await this.axiosPlayerData();
+                this.$router.push({name: 'home'}); // todo fix, doesnt work, only refreshes the same page
             }
 
             // Error on login
@@ -162,7 +162,7 @@ export default {
             AuthService.logout();
             this.$router.go({name: 'login'});
         },
-        async axiosPlayerData(retrying) {
+        axiosPlayerData() {
             axios
                 .get(AuthService.getApiUrl() + 'player/data', AuthService.getAuthHeader())
                 .then(response => {
@@ -171,31 +171,28 @@ export default {
                 })
                 .catch(async (error) => {
                     console.log(error);
-
-                    if (error.response.status === 401 && !retrying) {
-                        const hasRefreshed = await AuthService.refreshUser();
-                        if (hasRefreshed) {
-                            await this.axiosPlayerData(true)
-                        }
-                    }
                 })
                 .finally(() => {
                     this.loading = false;
                 });
         }
     },
-    created() {
-        const tokens = AuthService.getTokens();
-        console.log(tokens);
+    async created() {
+        // const tokens = AuthService.getTokens();
 
-        if (tokens && Object.hasOwn(tokens, 'token') && Object.hasOwn(tokens, 'refresh_token')) {
+        // if (tokens && Object.hasOwn(tokens, 'token') && Object.hasOwn(tokens, 'refresh_token')) {
+        //     this.hasToken = true;
+        //
+        //     this.axiosPlayerData(false);
+        //
+        //     return;
+        // }
+
+        const checked = await AuthService.checkUser(this, true);
+        if (checked) {
+            this.axiosPlayerData();
             this.hasToken = true;
-
-            this.axiosPlayerData(false);
-
-            return;
         }
-
         this.loading = false;
     }
 };
