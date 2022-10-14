@@ -76,6 +76,12 @@
                 </template>
             </div>
             <div class="mt-5" v-if="cardsCanSend && gameRunning">
+                <div v-if="displayChoosePlayer" class="d-flex flex-column align-items-start">
+                    <template v-for="(player, i) in game.players" :key="i">
+                        <a @click.prevent="selectSabotagedPlayer(player.id)" href="#"
+                           v-if="player.id !== game.myId">{{ player.nickname }} ({{ player.id }})</a>
+                    </template>
+                </div>
                 <div class="action-board mb-3">
                     <div class="action-board__tile" v-for="(tile, i) in actionsToSend" :key="i">
                         <span>{{ i }}</span>
@@ -138,10 +144,15 @@ export default {
             endOfGameData: null,
             isWinner: false,
             robbClasses: {},
+            players: [],
+
+            displayChoosePlayer: false,
+            temporaryIndex: null,
 
             // Actions
             actionsSelected: 0,
             actionBoard: null,
+            actionTargets: {},
             actionsToSend: {
                 1: null,
                 2: null,
@@ -236,14 +247,21 @@ export default {
             }
 
             let playerActions = [];
+            let targeting = [];
             Object.keys(this.actionsToSend).forEach((key) => {
                 playerActions.push(this.actionBoard[this.actionsToSend[key]].id);
+                targeting.push();
             });
 
             const checked = await AuthService.checkUser(this, false);
             if (checked) {
+                const data = {
+                    "moves": playerActions,
+                    "targeting": this.actionTargets
+                };
+
                 axios
-                    .post(AuthService.getApiUrl() + 'game/' + this.$route.params.id + '/play', {"moves": playerActions}, AuthService.getAuthHeader())
+                    .post(AuthService.getApiUrl() + 'game/' + this.$route.params.id + '/play', data, AuthService.getAuthHeader())
                     .then(response => {
                         console.log(response.data);
                         this.$router.push({path: '/games'});
@@ -275,7 +293,24 @@ export default {
                 return;
             }
 
+            if (this.actionBoard[index].type === "sabotage") {
+                this.displayChoosePlayer = true;
+                this.temporaryIndex = index;
+
+                return;
+            }
+
             // Save index of action selected
+            this.addActionToSelection(index);
+        },
+        selectSabotagedPlayer(playerId) {
+            this.actionTargets[this.actionsSelected] = playerId
+            this.addActionToSelection(this.temporaryIndex)
+
+            this.displayChoosePlayer = false;
+            this.temporaryIndex = null;
+        },
+        addActionToSelection(index) {
             this.actionsSelected++;
             this.actionBoard[index].selected = this.actionsSelected;
             this.actionsToSend[this.actionsSelected] = index;
