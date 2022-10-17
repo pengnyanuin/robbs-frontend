@@ -266,9 +266,9 @@ export default {
                         console.log(response.data);
                         this.$router.push({path: '/games'});
                     })
-                    .catch(function (error) {
+                    .catch((error) => {
                         console.log(error);
-                        this.gameError = true;
+                        // this.gameError = true;
                     })
                     .finally(() => {
                         console.log('cards sent maybe')
