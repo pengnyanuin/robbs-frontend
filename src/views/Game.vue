@@ -48,7 +48,8 @@
                     <Robb v-for="(player, playerIndex) in game.players" :key="playerIndex" :id="player.id"
                           v-if="gameRunning || displayEndOfGame" :class="robbClasses[player.id]"
                           :playerPosition="game.playerPositions[game.roundNumber][player.id]"
-                          :currentPlayer="player.id === game.myId" :movement="roundMovementData"/>
+                          :robbBubbles="playerBubbles[player.id]" :currentPlayer="player.id === game.myId"
+                          :movement="roundMovementData"/>
                     <MapObject v-for="(mapObject, mapObjectIndex) in game.mapObjects" :key="mapObjectIndex"
                                v-if="gameRunning || displayEndOfGame"
                                :objectPosition="game.objectPositions[game.roundNumber][mapObject.id]"/>
@@ -145,6 +146,7 @@ export default {
             isWinner: false,
             robbClasses: {},
             players: [],
+            playerBubbles: [],
 
             displayChoosePlayer: false,
             temporaryIndex: null,
@@ -206,7 +208,7 @@ export default {
             let animationIndex = 1;
             this.game.playerPositions[this.game.roundNumber] = this.game.playerPositions[this.game.roundNumber - 1];
             this.game.objectPositions[this.game.roundNumber] = this.game.objectPositions[this.game.roundNumber - 1];
-            this.roundMovementData.forEach((el) => {
+            this.roundMovementData['movement'].forEach((el, index) => {
 
                 el.movement.forEach((step) => {
                     console.log(step);
@@ -230,6 +232,12 @@ export default {
                                 console.log(this.game.objectPositions[this.game.roundNumber][mapObject]);
                             } else {
                                 console.log('STAAAAY');
+                            }
+                        }, animationIndex * 500))
+                    } else if (Object.hasOwn(step, 'enhancement')) {
+                        this.playTimeout.push(setTimeout(() => {
+                            if (this.roundMovementData['targeting'][index]) {
+                                // todo finish
                             }
                         }, animationIndex * 500))
                     }
@@ -360,6 +368,7 @@ export default {
                             // prepare empty classes for all robbs to be adjustable later
                             Object.entries(this.game.players).forEach(([playerNum, player]) => {
                                 this.robbClasses[player.id] = '';
+                                this.playerBubbles[player.id] = [];
                             });
                             console.log(this.game);
                             return;
