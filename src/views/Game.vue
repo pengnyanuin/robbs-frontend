@@ -231,13 +231,18 @@ export default {
                                 this.game.objectPositions[this.game.roundNumber][mapObject] = step.new_position;
                                 console.log(this.game.objectPositions[this.game.roundNumber][mapObject]);
                             } else {
-                                console.log('STAAAAY');
+                                // console.log('STAAAAY');
                             }
                         }, animationIndex * 500))
                     } else if (Object.hasOwn(step, 'enhancement')) {
                         this.playTimeout.push(setTimeout(() => {
                             if (this.roundMovementData['targeting'][index]) {
                                 // todo finish
+                                const targeting = this.roundMovementData['targeting'][index];
+                                this.playerBubbles[targeting.targets].push({
+                                    'type': targeting.type,
+                                    'properties': targeting.properties,
+                                });
                             }
                         }, animationIndex * 500))
                     }
