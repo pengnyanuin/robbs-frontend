@@ -1,8 +1,10 @@
 <template>
-    <div class="robb" :class="['rot-' + position.rot, {'current': currentPlayer}]"
-         :style="{position: 'absolute', top: position.top + 'px', left: position.left + 'px'}" ref="thisRob">
+    <div class="robb__wrapper" :style="{position: 'absolute', top: position.top + 'px', left: position.left + 'px'}" >
         <div v-if="robbBubbles.length > 0" class="robb__bubble">{{ robbBubbles }}</div>
-        {{ currentPlayer ? 'me' : id }}
+        <div class="robb" :class="['rot-' + position.rot, {'current': currentPlayer}]"
+             ref="thisRob">
+            {{ currentPlayer ? 'me' : id }}
+        </div>
     </div>
 </template>
 <script>
@@ -19,8 +21,8 @@ export default {
         playerPosition: {
             deep: true,
             handler: function (newPosition) {
-                this.position.left = 5 + (newPosition[1] - 1) * 50;
-                this.position.top = 20 + (newPosition[0] - 1) * 50;
+                this.position.left = (newPosition[1] - 1) * 50;
+                this.position.top = (newPosition[0] - 1) * 50;
                 this.position.rot = newPosition[2] + 1;
             }
         }
@@ -28,8 +30,8 @@ export default {
     data() {
         return {
             position: {
-                top: 20,
-                left: 5,
+                top: 0,
+                left: 0,
                 rot: 0,
             }
         }

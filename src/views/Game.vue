@@ -76,6 +76,7 @@
                     </div>
                 </template>
             </div>
+            <pre>{{ playerBubbles }}</pre>
             <div class="mt-5" v-if="cardsCanSend && gameRunning">
                 <div v-if="displayChoosePlayer" class="d-flex flex-column align-items-start">
                     <template v-for="(player, i) in game.players" :key="i">
@@ -146,7 +147,9 @@ export default {
             isWinner: false,
             robbClasses: {},
             players: [],
-            playerBubbles: [],
+            playerBubbles: {},
+            playerBubblesDefault: {},
+            temporaryEnhancement: {},
 
             displayChoosePlayer: false,
             temporaryIndex: null,
@@ -200,6 +203,7 @@ export default {
                 console.log(this.game.playerPositions[this.game.roundNumber]);
                 this.playTimeout.forEach((timer) => clearTimeout(timer));
                 this.playTimeout = [];
+                this.playerBubbles = JSON.parse(JSON.stringify(this.playerBubblesDefault));
                 this.playRound();
             }
 
@@ -215,6 +219,10 @@ export default {
                     if (Object.hasOwn(step, 'player_id')) {
                         const player = step.player_id;
                         this.playTimeout.push(setTimeout(() => {
+                            // Clear bubbles; todo add effect
+                            if (this.playerBubbles[player].length > 0) {
+                                this.playerBubbles[player] = [];
+                            }
                             if (step.new_position) {
                                 this.game.playerPositions[this.game.roundNumber][player] = step.new_position;
                                 console.log(this.game.playerPositions[this.game.roundNumber][player]);
@@ -374,6 +382,8 @@ export default {
                             Object.entries(this.game.players).forEach(([playerNum, player]) => {
                                 this.robbClasses[player.id] = '';
                                 this.playerBubbles[player.id] = [];
+                                this.playerBubblesDefault[player.id] = [];
+                                this.temporaryEnhancement[player.id] = [];
                             });
                             console.log(this.game);
                             return;
